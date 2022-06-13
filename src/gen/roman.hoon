@@ -6,7 +6,6 @@
 ::    @ud -> quantity to a Roman numeral expression
 ::
 /+  *roman
-!:
 ::
 :-  %say
 ::  caution - the type union in this spec is sensitive to the order of
