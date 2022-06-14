@@ -1,7 +1,6 @@
 ::
 ::  A library for parsing and producing Roman numeral expressions.
 ::
-!:
 =<
 ::
 |%
@@ -60,6 +59,7 @@
     %d  (just 'd')
     %m  ;~(pose (jest 'mmm') (jest 'mm') (just 'm'))
   ==
+::  +roman-value-unit: 0 if the unit is empty otherwise ++roman-value
 ::
 ++  roman-value-unit
   |=  roman=(unit @t)
