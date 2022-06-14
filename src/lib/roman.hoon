@@ -1,16 +1,27 @@
 ::
 ::  A library for parsing and producing Roman numeral expressions.
 ::
+!:
 =<
 ::
 |%
-::  +parse: determine the value of a Roman numeral expression
+::  +parse: produce the value of a Roman numeral expression
 ::
 ++  parse
   |=  expression=tape
   ^-  @ud
-  ~&  "parse"
-  !!
+  %+  scan
+    (cass expression)
+  %-  full
+  ;~  (comp |=([a=@ud b=@ud] (add a b)))
+    (cook roman-value-unit (punt (numeral-rule %m)))
+    (cook roman-value-unit (punt (numeral-rule %d)))
+    (cook roman-value-unit (punt (numeral-rule %c)))
+    (cook roman-value-unit (punt (numeral-rule %l)))
+    (cook roman-value-unit (punt (numeral-rule %x)))
+    (cook roman-value-unit (punt (numeral-rule %v)))
+    (cook roman-value-unit (punt (numeral-rule %i)))
+  ==
 ::  +yield: produce the Roman numeral for a given value
 ::
 ++  yield
@@ -35,12 +46,53 @@
   ==
 --
 ::
-|%
-++  numerals
-  !!
+|%  
+::  +numeral-rule: match valid sequences that begin with the given numeral
 ::
-++  subtractives
-  !!
+++  numeral-rule
+  |=  numeral=?(%i %v %x %l %c %d %m)
+  ?-  numeral
+    %i  ;~(pose (jest 'iiii') (jest 'iii') (jest 'ii') (jest 'iv') (jest 'ix') (just 'i'))
+    %v  (just 'v')
+    %x  ;~(pose (jest 'xxx') (jest 'xx') (jest 'xc') (jest 'xl') (just 'x'))
+    %l  (just 'l')
+    %c  ;~(pose (jest 'ccc') (jest 'cc') (jest 'cm') (jest 'cd') (just 'c'))
+    %d  (just 'd')
+    %m  ;~(pose (jest 'mmm') (jest 'mm') (just 'm'))
+  ==
+::
+++  roman-value-unit
+  |=  roman=(unit @t)
+  ^-  @ud
+  ?~  roman
+    0
+  (roman-value (trip u.roman))
+::  +roman-value: produce the value of a simple expression
+::
+::    "Simple" here means a single numeral, an additive series or 
+::    a subtractive pair. ex: "i", "ii", "iv" but not "xi"
+:: 
+::    Caution: this will produce a value for an invalid Roman numeral and
+::    a wrong value for "complex" expressions.
+::
+++  roman-value
+  |=  roman=tape
+  ^-  @ud
+  ?~  roman
+    !!
+  ::
+  =/  value-map  (malt numerals-and-subtractives)
+  %+  fall
+    ::  roman is a single numeral or a subtractive
+    ::
+    (~(get by value-map) roman)
+  ::  roman is an additive series
+  ::
+  %+  mul
+    (lent roman)
+  (~(got by value-map) (trip i.roman))
+::  +numerals-and-subtractives: a list of pairs of single numerals 
+::  and valid subtractive pairs in descending order of value
 ::
 ++  numerals-and-subtractives
   ^-  (list [tape @ud])
