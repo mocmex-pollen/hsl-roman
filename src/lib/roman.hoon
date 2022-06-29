@@ -35,9 +35,7 @@
     final
   ?~  options
     !!
-  =/  roman=tape  -.i.options
-  =/  value=@ud  +.i.options
-  =/  expression=tape  (zing (reap (div n value) roman))
+  =/  expression=tape  (reap (div n value.i.options) roman.i.options)
   %=  $
     n        (mod n value)
     options  t.options
@@ -85,29 +83,29 @@
   %+  fall
     ::  roman is a single numeral or a subtractive
     ::
-    (~(get by value-map) roman)
+    (~(get by value-map) (crip roman))
   ::  roman is an additive series
   ::
   %+  mul
     (lent roman)
-  (~(got by value-map) (trip i.roman))
+  (~(got by value-map) i.roman)
 ::  +numerals-and-subtractives: a list of pairs of single numerals 
 ::  and valid subtractive pairs in descending order of value
 ::
 ++  numerals-and-subtractives
-  ^-  (list [tape @ud])
-  :~  ["m" 1.000]
-      ["cm" 900]
-      ["d" 500]
-      ["cd" 400]
-      ["c" 100]
-      ["xc" 90]
-      ["l" 50]
-      ["xl" 40]
-      ["x" 10]
-      ["ix" 9]
-      ["v" 5]
-      ["iv" 4]
-      ["i" 1]
+  ^-  (list [roman=@t value=@ud])
+  :~  ['m' 1.000]
+      ['cm' 900]
+      ['d' 500]
+      ['cd' 400]
+      ['c' 100]
+      ['xc' 90]
+      ['l' 50]
+      ['xl' 40]
+      ['x' 10]
+      ['ix' 9]
+      ['v' 5]
+      ['iv' 4]
+      ['i' 1]
   ==
 --
